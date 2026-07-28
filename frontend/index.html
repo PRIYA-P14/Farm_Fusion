@@ -458,8 +458,46 @@ async function checkBackend(){
   }
 }
 
-const DEFAULT_CROPS = ["Wheat","Rice","Tomato","Onion","Potato","Cotton","Maize","Soybean"];
-const DEFAULT_MARKETS = ["Erode Market","Salem Market","Coimbatore Market","Namakkal Market","Tiruchengode Market","Karur Market","Madurai Market","Bangalore Market"];
+const DEFAULT_CROPS = [
+  "Wheat","Rice","Tomato","Onion","Potato","Cotton","Maize","Soybean",
+  "Sugarcane","Turmeric","Chilli","Groundnut","Banana","Garlic",
+  "Brinjal","Cabbage","Cauliflower","Sunflower","Jowar","Bajra",
+  "Mango","Coconut","Tamarind","Drumstick","Bitter Gourd","Bottle Gourd",
+  "Pumpkin","Okra","Spinach","Coriander","Curry Leaves","Beetroot",
+  "Carrot","Radish","Peas","Beans","Lemon","Papaya",
+  "Guava","Watermelon","Cucumber","Ginger","Mustard","Sesame","Lentil"
+];
+const DEFAULT_MARKETS = [
+  // Tamil Nadu
+  "Erode Market","Salem Market","Coimbatore Market","Namakkal Market",
+  "Tiruchengode Market","Karur Market","Madurai Market","Chennai Market",
+  "Trichy Market","Tirunelveli Market","Vellore Market","Thanjavur Market",
+  "Dindigul Market","Tiruppur Market","Kancheepuram Market","Cuddalore Market",
+  "Villupuram Market","Pudukottai Market","Ramanathapuram Market","Virudhunagar Market",
+  "Sivaganga Market","Thoothukudi Market","Nagercoil Market","Krishnagiri Market",
+  "Dharmapuri Market","Perambalur Market","Ariyalur Market","Nagapattinam Market",
+  "Mayiladuthurai Market","Tiruvarur Market","Kallakurichi Market","Ranipet Market",
+  "Tenkasi Market","Chengalpattu Market","Tirupattur Market","Nilgiris Market",
+  // Karnataka
+  "Bangalore Market","Mysore Market","Hubli Market","Belgaum Market",
+  "Davangere Market","Shimoga Market",
+  // Andhra Pradesh
+  "Guntur Market","Kurnool Market","Vijayawada Market","Visakhapatnam Market","Nellore Market",
+  // Telangana
+  "Hyderabad Market","Warangal Market","Nizamabad Market",
+  // Maharashtra
+  "Pune Market","Nashik Market","Nagpur Market","Aurangabad Market","Solapur Market",
+  // Gujarat
+  "Ahmedabad Market","Surat Market","Rajkot Market","Vadodara Market",
+  // Rajasthan
+  "Jaipur Market","Jodhpur Market","Kota Market",
+  // Uttar Pradesh
+  "Lucknow Market","Agra Market","Kanpur Market","Varanasi Market",
+  // Punjab & Haryana
+  "Amritsar Market","Ludhiana Market","Chandigarh Market","Hisar Market",
+  // Madhya Pradesh
+  "Indore Market","Bhopal Market","Jabalpur Market"
+];
 
 function populateSelects(crops, markets){
   cropSelect.innerHTML = crops.map(c => `<option value="${c}">${c}</option>`).join('');
