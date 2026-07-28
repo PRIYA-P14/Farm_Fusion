@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crop Health Agent · AgriVerse AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;600;700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <div>
+      <div class="eyebrow">AgriVerse AI</div>
+      <h1>Crop Health Agent</h1>
+      <p>Upload a leaf image to detect diseases, get treatment plans, and assess spread risk.</p>
+    </div>
+  </header>
+
+  <div class="grid">
+
+    <!-- LEFT: Upload panel -->
+    <div class="panel-card">
+      <h2>Upload Leaf Image</h2>
+
+      <div class="field">
+        <label for="cropSelect">Crop Name</label>
+        <select id="cropSelect">
+          <option value="Apple">Apple</option>
+          <option value="Corn">Corn</option>
+          <option value="Grape">Grape</option>
+          <option value="Pepper">Pepper</option>
+          <option value="Potato">Potato</option>
+          <option value="Tomato">Tomato</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Leaf Image</label>
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" hidden>
+          <div class="upload-inner" id="uploadInner">
+            <div class="upload-icon">🌿</div>
+            <p>Click or drag & drop a leaf image</p>
+            <span>JPEG · PNG · WEBP · max 10 MB</span>
+          </div>
+          <img id="preview" class="preview-img" alt="Preview" style="display:none;">
+        </div>
+      </div>
+
+      <button class="btn-predict" id="predictBtn" disabled>Analyse Leaf</button>
+      <button class="btn-back" id="backBtn" style="display:none;">← Upload Another Image</button>
+      <div class="error-box" id="errorBox"></div>
+    </div>
+
+    <!-- RIGHT: Results board -->
+    <div class="board" id="board">
+      <div class="empty-state" id="emptyState">
+        <div class="glyph">🔬</div>
+        <h3>No analysis yet</h3>
+        <p>Upload a leaf image and select the crop, then click "Analyse Leaf" to get a full disease report.</p>
+      </div>
+      <div id="results" style="display:none;"></div>
+    </div>
+
+  </div>
+
+  <footer>AgriVerse AI · Crop Health Agent · AI predictions are for guidance only — consult an agronomist for critical decisions</footer>
+</div>
+
+<div class="loader-overlay" id="loaderOverlay">
+  <div class="loader-box">
+    <div class="spinner"></div>
+    <p>Analysing leaf image…</p>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

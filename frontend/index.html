@@ -368,6 +368,8 @@
       <p>Live mandi rates, a 7-day forecast, and a straight answer on when to sell.</p>
     </div>
 
+    <div class="status" id="status"><span class="dot"></span><span id="statusText">Checking backend...</span></div>
+
   </header>
 
   <div class="grid">
@@ -447,12 +449,12 @@ async function checkBackend(){
   try{
     const res = await fetch(`${API_BASE}/`);
     if(!res.ok) throw new Error();
-    statusEl.classList.add('ok');
-    statusText.textContent = 'Backend connected';
+    if(statusEl) statusEl.classList.add('ok');
+    if(statusText) statusText.textContent = 'Backend connected';
     return true;
   }catch(e){
-    statusEl.classList.add('err');
-    statusText.textContent = 'Backend not reachable';
+    if(statusEl) statusEl.classList.add('err');
+    if(statusText) statusText.textContent = 'Backend not reachable';
     showError('Cannot reach the API at ' + API_BASE + '. Make sure "uvicorn api:app --reload --port 8004" is running in a terminal, then reload this page.');
     return false;
   }

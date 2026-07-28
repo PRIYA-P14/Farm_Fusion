@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgriVerse AI · Unified Agent Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;600;700&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f4eddc;
+    --paper-line: #e1d3b4;
+    --ink: #1b2b1f;
+    --ink-soft: #506056;
+    --board: #1f3d2e;
+    --board-soft: #285140;
+    --board-line: #355946;
+    --chalk: #f7f1e3;
+    --chalk-dim: #c0cfbf;
+    --green: #4d7b3e;
+    --gold: #d9a12e;
+    --rust: #a44a28;
+    --radius: 2px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(circle at top left, rgba(217, 161, 46, 0.12), transparent 34%),
+      radial-gradient(circle at bottom right, rgba(77, 123, 62, 0.12), transparent 30%),
+      var(--paper);
+    background-image:
+      linear-gradient(var(--paper-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--paper-line) 1px, transparent 1px);
+    background-size: 100% 2.1em, 2.1em 100%;
+    color: var(--ink);
+    font-family: 'Work Sans', sans-serif;
+    line-height: 1.5;
+  }
+
+  .wrap {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 28px 24px 48px;
+  }
+
+  .hero {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 20px;
+    margin-bottom: 18px;
+  }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--green);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-family: 'Roboto Slab', serif;
+    font-size: clamp(32px, 4vw, 48px);
+    line-height: 1.05;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  .hero p {
+    max-width: 58ch;
+    margin: 10px 0 0;
+    color: var(--ink-soft);
+    font-size: 15px;
+  }
+
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1.5px solid var(--ink);
+    background: rgba(247, 241, 227, 0.9);
+    padding: 8px 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    white-space: nowrap;
+    border-radius: var(--radius);
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 0 4px rgba(77, 123, 62, 0.12);
+  }
+
+  .switcher {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin: 18px 0 16px;
+  }
+
+  .agent-btn {
+    appearance: none;
+    border: 1.5px solid var(--ink);
+    background: rgba(247, 241, 227, 0.96);
+    color: var(--ink);
+    padding: 18px 18px 16px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    text-align: left;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    box-shadow: 0 1px 0 rgba(27, 43, 31, 0.08);
+  }
+
+  .agent-btn:hover {
+    transform: translateY(-1px);
+    border-color: var(--green);
+    box-shadow: 0 8px 18px rgba(27, 43, 31, 0.08);
+  }
+
+  .agent-btn.active {
+    background: var(--board);
+    color: var(--chalk);
+    border-color: var(--board);
+  }
+
+  .agent-kicker {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: inherit;
+    opacity: 0.75;
+    margin-bottom: 8px;
+  }
+
+  .agent-title {
+    display: block;
+    font-family: 'Roboto Slab', serif;
+    font-size: 20px;
+    line-height: 1.15;
+    margin-bottom: 6px;
+  }
+
+  .agent-copy {
+    display: block;
+    font-size: 13px;
+    color: inherit;
+    opacity: 0.86;
+  }
+
+  .frame-shell {
+    border: 1.5px solid var(--ink);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--board);
+    min-height: min(980px, calc(100vh - 210px));
+    box-shadow: 0 18px 36px rgba(27, 43, 31, 0.10);
+  }
+
+  .frame-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 14px 18px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.05), transparent);
+    border-bottom: 1px solid var(--board-line);
+    color: var(--chalk);
+  }
+
+  .frame-title {
+    font-family: 'Roboto Slab', serif;
+    font-size: 18px;
+    margin: 0;
+  }
+
+  .frame-note {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--chalk-dim);
+  }
+
+  .frame-wrap {
+    position: relative;
+    min-height: 900px;
+    background: var(--board);
+  }
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    min-height: 900px;
+    border: 0;
+    display: none;
+    background: var(--board);
+  }
+
+  iframe.active {
+    display: block;
+  }
+
+  .footer {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--paper-line);
+    color: var(--ink-soft);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+  }
+
+  @media (max-width: 860px) {
+    .switcher {
+      grid-template-columns: 1fr;
+    }
+
+    .frame-shell {
+      min-height: auto;
+    }
+
+    iframe,
+    .frame-wrap {
+      min-height: 1040px;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="status"><span class="dot"></span><span id="statusText">Select an agent to begin</span></div>
+    </section>
+
+    <section class="switcher" aria-label="Agent selector">
+      <button class="agent-btn active" id="marketBtn" type="button" aria-pressed="true">
+        <span class="agent-kicker">Market Price Agent</span>
+        <span class="agent-title">Check crop prices</span>
+        <span class="agent-copy">Open the market board to view price prediction, forecast, and selling advice.</span>
+      </button>
+
+      <button class="agent-btn" id="cropBtn" type="button" aria-pressed="false">
+        <span class="agent-kicker">Crop Health Agent</span>
+        <span class="agent-title">Diagnose leaf health</span>
+        <span class="agent-copy">Open the crop health board to upload a leaf image and get the disease report.</span>
+      </button>
+    </section>
+
+    <section class="frame-shell">
+      <div class="frame-head">
+        <div class="frame-title" id="frameTitle">Market Price Agent</div>
+      </div>
+      <div class="frame-wrap">
+        <iframe
+          id="marketFrame"
+          class="active"
+          title="Market Price Agent"
+          src="../frontend/index.html"
+          loading="lazy"
+        ></iframe>
+        <iframe
+          id="cropFrame"
+          title="Crop Health Agent"
+          src="../crop_health_agent/frontend/index.html"
+          loading="lazy"
+        ></iframe>
+      </div>
+    </section>
+
+  </div>
+
+<script>
+  const marketBtn = document.getElementById('marketBtn');
+  const cropBtn = document.getElementById('cropBtn');
+  const marketFrame = document.getElementById('marketFrame');
+  const cropFrame = document.getElementById('cropFrame');
+  const frameTitle = document.getElementById('frameTitle');
+  const statusText = document.getElementById('statusText');
+
+  function activateAgent(agent) {
+    const isMarket = agent === 'market';
+
+    marketBtn.classList.toggle('active', isMarket);
+    cropBtn.classList.toggle('active', !isMarket);
+    marketBtn.setAttribute('aria-pressed', String(isMarket));
+    cropBtn.setAttribute('aria-pressed', String(!isMarket));
+
+    marketFrame.classList.toggle('active', isMarket);
+    cropFrame.classList.toggle('active', !isMarket);
+    frameTitle.textContent = isMarket ? 'Market Price Agent' : 'Crop Health Agent';
+    statusText.textContent = isMarket
+      ? 'Market price agent is open in this page'
+      : 'Crop health agent is open in this page';
+  }
+
+  marketBtn.addEventListener('click', () => activateAgent('market'));
+  cropBtn.addEventListener('click', () => activateAgent('crop'));
+</script>
+</body>
+</html>
