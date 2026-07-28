@@ -1,0 +1,11 @@
+{
+  "name": "soil-intelligence-agent",
+  "version": "1.0.0",
+  "description": "AI-Powered Soil Intelligence Agent for Multi-Agent Agriculture Platform",
+  "scripts": {
+    "server": "cd server && npm run dev",
+    "client": "cd client && npm run dev",
+    "install:all": "cd server && npm install && cd ../client && npm install",
+    "dev": "start cmd /k \"cd server && npm run dev\" && start cmd /k \"cd client && npm run dev\""
+  }
+}

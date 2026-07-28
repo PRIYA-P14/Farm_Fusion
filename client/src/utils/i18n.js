@@ -1,0 +1,35 @@
+const translations = {
+  en: {
+    appName: 'Soil Intelligence Agent',
+    tagline: 'AI-Powered Soil Analysis & Crop Recommendations',
+    newAnalysis: 'New Analysis',
+    history: 'History',
+    dashboard: 'Dashboard',
+    farmerInfo: 'Farmer Information',
+    soilParams: 'Soil Parameters',
+    weatherData: 'Weather Data',
+    analyseNow: 'Analyse Soil',
+    soilHealth: 'Soil Health Score',
+    suitableCrops: 'Suitable Crops',
+    fertilizers: 'Fertilizer Recommendations',
+    actionPlan: 'Action Plan',
+    yieldPrediction: 'Yield Prediction',
+    irrigation: 'Irrigation Analysis',
+    risks: 'Risk Analysis',
+    notifications: 'Smart Alerts',
+    exportPDF: 'Export PDF',
+    exportCSV: 'Export CSV',
+    print: 'Print',
+    deleteReport: 'Delete',
+    viewReport: 'View Report',
+    searchReports: 'Search reports...',
+    noReports: 'No reports found',
+    loading: 'Analysing soil data...',
+    excellent: 'Excellent',
+    good: 'Good',
+    average: 'Average',
+    poor: 'Poor',
+  }
+};
+
+export const t = (_, key) => translations.en[key] || key;

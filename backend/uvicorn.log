@@ -1,0 +1,17 @@
+INFO:     Will watch for changes in these directories: ['d:\\AgentVerse\\backend']
+INFO:     Uvicorn running on http://127.0.0.1:5000 (Press CTRL+C to quit)
+INFO:     Started reloader process [9888] using WatchFiles
+INFO:     Started server process [12528]
+INFO:     Waiting for application startup.
+INFO: \u2705 MongoDB connected
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app\services\soil_service.py'. Reloading...
+ INFO:     127.0.0.1:52580 - "GET /api/auth/profile HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60300 - "GET /api/auth/profile HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64546 - "POST /api/auth/login HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54242 - "POST /api/auth/login HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64226 - "POST /api/auth/login HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64342 - "POST /api/auth/google HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58699 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63037 - "GET /api/auth/profile HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61623 - "POST /api/auth/login HTTP/1.1" 404 Not Found
