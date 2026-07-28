@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Market Price Agent · AgriVerse AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;600;700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDE6D3;
+    --paper-line:#D8CDAE;
+    --ink:#1B2B1F;
+    --ink-soft:#4A5A4C;
+    --board:#1F3D2E;
+    --board-line:#33553F;
+    --chalk:#F5EFE0;
+    --chalk-dim:#B9C7BA;
+    --turmeric:#D9A02C;
+    --turmeric-dark:#B5811C;
+    --leaf:#4C7A3D;
+    --rust:#A64B2A;
+    --radius:2px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    background-image:
+      linear-gradient(var(--paper-line) 1px, transparent 1px);
+    background-size: 100% 2.1em;
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    line-height:1.5;
+  }
+  a{color:inherit;}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px 80px;}
+
+  /* ---------- header ---------- */
+  header{
+    padding:44px 0 28px;
+    border-bottom:2px solid var(--ink);
+    margin-bottom:36px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:16px;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--leaf);
+    font-weight:600;
+    margin-bottom:10px;
+  }
+  h1{
+    font-family:'Roboto Slab', serif;
+    font-size:40px;
+    font-weight:700;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  header p{
+    margin:8px 0 0;
+    color:var(--ink-soft);
+    max-width:36ch;
+    font-size:15px;
+  }
+  .status{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    padding:7px 12px;
+    border:1.5px solid var(--ink);
+    border-radius:var(--radius);
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:var(--chalk);
+    white-space:nowrap;
+  }
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--ink-soft);}
+  .status.ok .dot{background:var(--leaf);}
+  .status.err .dot{background:var(--rust);}
+
+  /* ---------- layout ---------- */
+  .grid{
+    display:grid;
+    grid-template-columns:340px 1fr;
+    gap:28px;
+    align-items:start;
+  }
+  @media (max-width:860px){
+    .grid{grid-template-columns:1fr;}
+  }
+
+  /* ---------- form card (ledger) ---------- */
+  .ledger{
+    background:var(--chalk);
+    border:1.5px solid var(--ink);
+    border-radius:var(--radius);
+    padding:24px;
+  }
+  .ledger h2{
+    font-family:'Roboto Slab', serif;
+    font-size:16px;
+    margin:0 0 18px;
+    padding-bottom:12px;
+    border-bottom:1px solid var(--paper-line);
+  }
+  .field{margin-bottom:16px;}
+  .field label{
+    display:block;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--ink-soft);
+    font-weight:600;
+    margin-bottom:6px;
+  }
+  select, input{
+    width:100%;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:14px;
+    padding:9px 10px;
+    border:1.5px solid var(--ink);
+    border-radius:var(--radius);
+    background:#fff;
+    color:var(--ink);
+  }
+  select:focus, input:focus{
+    outline:3px solid var(--turmeric);
+    outline-offset:1px;
+  }
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .hint{font-size:11.5px;color:var(--ink-soft);margin-top:5px;}
+
+  .checkline{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:13px;
+    margin-bottom:16px;
+    color:var(--ink-soft);
+  }
+  .checkline input{width:auto;}
+
+  button.run{
+    width:100%;
+    background:var(--board);
+    color:var(--chalk);
+    border:none;
+    padding:13px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    font-weight:600;
+    border-radius:var(--radius);
+    cursor:pointer;
+    transition:background .15s ease;
+  }
+  button.run:hover{background:#16301F;}
+  button.run:disabled{background:var(--ink-soft);cursor:wait;}
+
+  .error-box{
+    margin-top:14px;
+    border:1.5px solid var(--rust);
+    background:#FBEAE2;
+    color:#7A2E15;
+    padding:10px 12px;
+    font-size:12.5px;
+    border-radius:var(--radius);
+    display:none;
+  }
+
+  /* ---------- results / mandi board ---------- */
+  .board{
+    background:var(--board);
+    color:var(--chalk);
+    border-radius:var(--radius);
+    padding:28px;
+    min-height:420px;
+    position:relative;
+    background-image: radial-gradient(circle at 18% 8%, rgba(245,239,224,0.05), transparent 45%);
+    border:1.5px solid var(--ink);
+  }
+  .board-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    border-bottom:1px solid var(--board-line);
+    padding-bottom:14px;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .board-title{
+    font-family:'Roboto Slab', serif;
+    font-size:20px;
+    font-weight:600;
+    letter-spacing:0.01em;
+  }
+  .board-date{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--chalk-dim);
+  }
+  .empty-state{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:70px 20px;
+    color:var(--chalk-dim);
+  }
+  .empty-state .glyph{font-size:34px;margin-bottom:14px;}
+  .empty-state h3{
+    font-family:'Roboto Slab', serif;
+    color:var(--chalk);
+    margin:0 0 8px;
+    font-size:17px;
+  }
+  .empty-state p{max-width:34ch;margin:0;font-size:13.5px;}
+
+  .price-hero{
+    display:flex;
+    align-items:flex-end;
+    gap:28px;
+    flex-wrap:wrap;
+    margin-bottom:26px;
+  }
+  .price-big{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:44px;
+    font-weight:600;
+    line-height:1;
+  }
+  .price-big span{font-size:16px;color:var(--chalk-dim);font-weight:400;}
+  .price-sub{font-size:12px;color:var(--chalk-dim);margin-top:6px;}
+  .change-pill{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    padding:5px 10px;
+    border-radius:var(--radius);
+    font-weight:600;
+  }
+  .change-pill.up{background:rgba(76,122,61,0.25);color:#9FDB8B;}
+  .change-pill.down{background:rgba(166,75,42,0.25);color:#F0A484;}
+
+  /* chalk bar chart */
+  .chart-label{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--chalk-dim);
+    margin-bottom:10px;
+  }
+  .chart{
+    display:flex;
+    align-items:flex-end;
+    gap:10px;
+    height:130px;
+    margin-bottom:8px;
+    border-bottom:1px dashed var(--board-line);
+    padding-bottom:2px;
+  }
+  .bar-col{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+    height:100%;
+  }
+  .bar{
+    width:70%;
+    background:var(--turmeric);
+    border-radius:2px 2px 0 0;
+    position:relative;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.15);
+  }
+  .bar.best{background:#F0C55C;}
+  .bar-val{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    color:var(--chalk-dim);
+    margin-bottom:5px;
+  }
+  .bar-day{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    color:var(--chalk-dim);
+    margin-top:6px;
+  }
+
+  .advice-banner{
+    margin-top:22px;
+    padding:14px 16px;
+    border-left:3px solid var(--turmeric);
+    background:rgba(217,160,44,0.1);
+    font-size:13.5px;
+  }
+  .advice-banner strong{display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--turmeric);margin-bottom:4px;}
+
+  .sections{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    margin-top:26px;
+  }
+  @media (max-width:640px){.sections{grid-template-columns:1fr;}}
+
+  .panel{
+    background:rgba(245,239,224,0.04);
+    border:1px solid var(--board-line);
+    border-radius:var(--radius);
+    padding:16px;
+  }
+  .panel h4{
+    font-family:'Roboto Slab', serif;
+    font-size:13px;
+    margin:0 0 12px;
+    color:var(--chalk-dim);
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+  }
+  .kv{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-family:'IBM Plex Mono', monospace;}
+  .kv:last-child{border-bottom:none;}
+  .kv .k{color:var(--chalk-dim);font-family:'Work Sans',sans-serif;}
+  .profit-pos{color:#9FDB8B;}
+  .profit-neg{color:#F0A484;}
+
+  .market-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:8px 0;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+    font-size:12.5px;
+  }
+  .market-row:last-child{border-bottom:none;}
+  .market-row .m-name{font-weight:600;}
+  .market-row .m-meta{color:var(--chalk-dim);font-family:'IBM Plex Mono', monospace;font-size:11px;}
+  .market-row .m-price{font-family:'IBM Plex Mono', monospace;color:var(--turmeric);}
+
+  footer{
+    margin-top:44px;
+    padding-top:18px;
+    border-top:1px solid var(--paper-line);
+    font-size:11.5px;
+    color:var(--ink-soft);
+    font-family:'IBM Plex Mono', monospace;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <div class="eyebrow">AgriVerse AI</div>
+      <h1>Market Price Agent</h1>
+      <p>Live mandi rates, a 7-day forecast, and a straight answer on when to sell.</p>
+    </div>
+
+  </header>
+
+  <div class="grid">
+
+    <!-- LEFT: input ledger -->
+    <div class="ledger">
+      <h2>Enter your sale details</h2>
+
+      <div class="field">
+        <label for="crop">Crop</label>
+        <select id="crop"></select>
+      </div>
+
+      <div class="field">
+        <label for="market">Market</label>
+        <select id="market"></select>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="quantity">Quantity (kg)</label>
+          <input type="number" id="quantity" value="500" min="1">
+        </div>
+        <div class="field">
+          <label for="cost">Cost / kg (₹)</label>
+          <input type="number" id="cost" value="12" min="0">
+        </div>
+      </div>
+
+      <div class="checkline">
+        <input type="checkbox" id="useLocation" checked>
+        <label for="useLocation" style="margin:0;text-transform:none;letter-spacing:0;font-weight:400;">Suggest nearby markets (uses your device location)</label>
+      </div>
+
+      <button class="run" id="runBtn">Check prices</button>
+      <div class="error-box" id="errorBox"></div>
+
+    </div>
+
+    <!-- RIGHT: mandi board -->
+    <div class="board" id="board">
+      <div class="empty-state" id="emptyState">
+        <div class="glyph">◫</div>
+        <h3>The board is blank</h3>
+        <p>Choose a crop and market on the left, then check prices to fill this board with today's rate, a 7-day forecast, and a selling recommendation.</p>
+      </div>
+      <div id="results" style="display:none;"></div>
+    </div>
+
+  </div>
+
+  <footer>AgriVerse AI · Market Price Prediction Agent · data shown is simulated for demo purposes</footer>
+</div>
+
+<script>
+const API_BASE = "http://127.0.0.1:8004";
+
+const statusEl = document.getElementById('status');
+const statusText = document.getElementById('statusText');
+const cropSelect = document.getElementById('crop');
+const marketSelect = document.getElementById('market');
+const runBtn = document.getElementById('runBtn');
+const errorBox = document.getElementById('errorBox');
+const emptyState = document.getElementById('emptyState');
+const resultsEl = document.getElementById('results');
+
+function showError(msg){
+  errorBox.textContent = msg;
+  errorBox.style.display = 'block';
+}
+function clearError(){
+  errorBox.style.display = 'none';
+  errorBox.textContent = '';
+}
+
+async function checkBackend(){
+  try{
+    const res = await fetch(`${API_BASE}/`);
+    if(!res.ok) throw new Error();
+    statusEl.classList.add('ok');
+    statusText.textContent = 'Backend connected';
+    return true;
+  }catch(e){
+    statusEl.classList.add('err');
+    statusText.textContent = 'Backend not reachable';
+    showError('Cannot reach the API at ' + API_BASE + '. Make sure "uvicorn api:app --reload --port 8004" is running in a terminal, then reload this page.');
+    return false;
+  }
+}
+
+const DEFAULT_CROPS = ["Wheat","Rice","Tomato","Onion","Potato","Cotton","Maize","Soybean"];
+const DEFAULT_MARKETS = ["Erode Market","Salem Market","Coimbatore Market","Namakkal Market","Tiruchengode Market","Karur Market","Madurai Market","Bangalore Market"];
+
+function populateSelects(crops, markets){
+  cropSelect.innerHTML = crops.map(c => `<option value="${c}">${c}</option>`).join('');
+  marketSelect.innerHTML = markets.map(m => `<option value="${m}">${m}</option>`).join('');
+  cropSelect.value = "Onion";
+  marketSelect.value = markets.includes("Erode Market") ? "Erode Market" : markets[0];
+}
+
+async function loadOptions(){
+  populateSelects(DEFAULT_CROPS, DEFAULT_MARKETS);
+  try{
+    const [cropsRes, marketsRes] = await Promise.all([
+      fetch(`${API_BASE}/crops`),
+      fetch(`${API_BASE}/markets`)
+    ]);
+    const crops = (await cropsRes.json()).crops;
+    const markets = (await marketsRes.json()).markets;
+    populateSelects(crops, markets);
+  }catch(e){
+    // keep default options already populated
+  }
+}
+
+function getLocation(){
+  return new Promise((resolve) => {
+    if(!navigator.geolocation){ resolve(null); return; }
+    navigator.geolocation.getCurrentPosition(
+      pos => resolve({lat: pos.coords.latitude, lon: pos.coords.longitude}),
+      () => resolve(null),
+      {timeout: 4000}
+    );
+  });
+}
+
+function fmt(n){
+  return Number(n).toLocaleString('en-IN', {maximumFractionDigits:2});
+}
+
+function renderResults(data){
+  emptyState.style.display = 'none';
+  resultsEl.style.display = 'block';
+
+  const cur = data.current_price;
+  const fc = data.forecast;
+  const rec = data.selling_recommendation;
+  const profit = data.profit_estimation;
+  const nearby = data.nearby_markets;
+
+  const changeUp = fc.expected_change_percent >= 0;
+  const maxPrice = Math.max(...fc.forecast_7_days.map(d => d.predicted_price), cur.price_per_quintal);
+
+  const bars = fc.forecast_7_days.map(d => {
+    const isBest = d.date === rec.recommended_selling_date;
+    const h = Math.max(8, Math.round((d.predicted_price / maxPrice) * 100));
+    const dayLabel = new Date(d.date).toLocaleDateString('en-IN', {weekday:'short'});
+    return `
+      <div class="bar-col">
+        <div class="bar-val">₹${fmt(d.predicted_price)}</div>
+        <div class="bar ${isBest ? 'best' : ''}" style="height:${h}%;"></div>
+        <div class="bar-day">${dayLabel}</div>
+      </div>`;
+  }).join('');
+
+  const todayProfitClass = profit.profit_if_sold_today >= 0 ? 'profit-pos' : 'profit-neg';
+  const nextWeekProfitClass = profit.profit_if_sold_next_week >= 0 ? 'profit-pos' : 'profit-neg';
+
+  let nearbyHtml = '<div class="hint" style="color:var(--chalk-dim);">Enable location to see nearby markets.</div>';
+  if(nearby && nearby.length){
+    nearbyHtml = nearby.map(m => `
+      <div class="market-row">
+        <div>
+          <div class="m-name">${m.market}</div>
+          <div class="m-meta">${m.state} · ${m.distance_km} km away</div>
+        </div>
+        <div class="m-price">₹${fmt(m.price_per_quintal)}</div>
+      </div>`).join('');
+  }
+
+  resultsEl.innerHTML = `
+    <div class="board-header">
+      <div class="board-title">${cur.crop} · ${cur.market}</div>
+      <div class="board-date">as of ${cur.date}</div>
+    </div>
+
+    <div class="price-hero">
+      <div>
+        <div class="price-big">₹${fmt(cur.price_per_quintal)} <span>/ quintal</span></div>
+        <div class="price-sub">Today's price</div>
+      </div>
+      <div class="change-pill ${changeUp ? 'up' : 'down'}">
+        ${changeUp ? '▲' : '▼'} ${Math.abs(fc.expected_change_percent)}% expected by next week
+      </div>
+    </div>
+
+    <div class="chart-label">7-day price forecast (₹/quintal) · gold bar = best day to sell</div>
+    <div class="chart">${bars}</div>
+
+    <div class="advice-banner">
+      <strong>Selling recommendation</strong>
+      ${rec.advice}
+    </div>
+
+    <div class="sections">
+      <div class="panel">
+        <h4>Profit estimate</h4>
+        <div class="kv"><span class="k">Quantity</span><span>${fmt(profit.quantity_kg)} kg</span></div>
+        <div class="kv"><span class="k">Total cost</span><span>₹${fmt(profit.total_cost)}</span></div>
+        <div class="kv"><span class="k">Profit if sold today</span><span class="${todayProfitClass}">₹${fmt(profit.profit_if_sold_today)}</span></div>
+        <div class="kv"><span class="k">Profit if sold next week</span><span class="${nextWeekProfitClass}">₹${fmt(profit.profit_if_sold_next_week)}</span></div>
+      </div>
+      <div class="panel">
+        <h4>Nearby markets</h4>
+        ${nearbyHtml}
+      </div>
+    </div>
+  `;
+}
+
+async function runQuery(){
+  clearError();
+  const crop = cropSelect.value;
+  const market = marketSelect.value;
+  const quantity_kg = Number(document.getElementById('quantity').value) || 100;
+  const cost_price_per_kg = Number(document.getElementById('cost').value) || 0;
+
+  if(!crop || !market){
+    showError('Pick a crop and a market first.');
+    return;
+  }
+
+  runBtn.disabled = true;
+  runBtn.textContent = 'Checking…';
+
+  let body = { crop, market, quantity_kg, cost_price_per_kg };
+
+  if(document.getElementById('useLocation').checked){
+    const loc = await getLocation();
+    if(loc){ body.farmer_lat = loc.lat; body.farmer_lon = loc.lon; }
+  }
+
+  try{
+    const res = await fetch(`${API_BASE}/predict`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(body)
+    });
+    if(!res.ok){
+      const err = await res.json().catch(() => ({detail: 'Request failed'}));
+      throw new Error(err.detail || 'Request failed');
+    }
+    const data = await res.json();
+    renderResults(data);
+  }catch(e){
+    showError(e.message || 'Something went wrong reaching the agent.');
+  }finally{
+    runBtn.disabled = false;
+    runBtn.textContent = 'Check prices';
+  }
+}
+
+runBtn.addEventListener('click', runQuery);
+
+(async function init(){
+  await loadOptions();
+  await checkBackend();
+})();
+</script>
+</body>
+</html>
