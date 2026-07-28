@@ -1,0 +1,30 @@
+agents:
+  weather_agent:
+    enabled: true
+    max_retries: 3
+    timeout_seconds: 30
+  crop_agent:
+    enabled: true
+    max_retries: 3
+    timeout_seconds: 30
+  soil_agent:
+    enabled: true
+    max_retries: 3
+    timeout_seconds: 30
+  market_agent:
+    enabled: true
+    max_retries: 3
+    timeout_seconds: 30
+  government_agent:
+    enabled: true
+    max_retries: 3
+    timeout_seconds: 30
+  resource_agent:
+    enabled: true
+    max_retries: 3
+    timeout_seconds: 30
+
+orchestrator:
+  routing_strategy: intent_based
+  parallel_execution: true
+  max_agents_per_query: 3
