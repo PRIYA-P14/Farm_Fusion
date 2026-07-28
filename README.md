@@ -1,4 +1,4 @@
-# AgriVerse-AI 🌾
+# FarmFusion-AI 🌾
 
 An AI Multi-Agent Agriculture System built for the **AgentVerse Hackathon**.
 
